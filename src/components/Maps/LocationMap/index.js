@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {StyleSheet, Platform, PermissionsAndroid} from 'react-native';
 import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
@@ -10,63 +10,55 @@ const styles = StyleSheet.create({
   maps: {...StyleSheet.absoluteFillObject},
 });
 
-const LocationMap = () => {
-  const [locations, setLocations] = useState([]);
-  let _watchId;
+const LocationMap = ({lat, lng}) => {
+  const [location, setLocation] = useState({'lat':lat,'lng':lng});
+  const mapRef = useRef(null);
+  // console.log(location.lat);
+  // console.log(location.lng);
   useEffect(() => {
-    if (Platform.OS === 'ios') {
-      Geolocation.requestAuthorization('always');
-    }
-    if (Platform.OS === 'android') {
-      PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      );
-    }
-    _watchId = Geolocation.watchPosition(
-      (position) => {
-        const {latitude, longitude} = position.coords;
-        setLocations([...locations, {latitude, longitude}]);
-      },
-      (error) => {
-        console.warn('error', error);
-      },
-      {
-        enableHighAccuracy: true,
-        distanceFilter: 100,
-        interval: 5000,
-        fastestInterval: 2000,
-      },
-    );
-  }, [locations]);
+    setLocation({'lat':lat,'lng':lng});
+    mapRef.current.animateToRegion({
+      latitude: lat,
+      longitude: lng,
+      latitudeDelta: 0.0922,
+      longitudeDelta:0.0421})
+  }, [lat,lng]);
 
-  useEffect(() => {
-    return () => {
-      if (_watchId !== null) {
-        Geolocation.clearWatch(_watchId);
-      }
-    };
-  });
   return (
     <>
-      {locations.length > 0 && (
+      {location && (
         <MapView
+          ref={mapRef}
           provider={PROVIDER_GOOGLE}
           style={styles.maps}
           initialRegion={{
-            latitude: locations[0].latitude,
-            longitude: locations[0].longitude,
+            latitude: location.lat,
+            longitude: location.lng,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
-          }}>
-          {locations.map((location, index) => (
-            <Marker
-              key={`location-${index}`}
-              coordinate={{
-                latitude: location.latitude,
-                longitude: location.longitude,
-              }}
-            />
-          ))}
+          }}
+          onRegionChange={(region) => {
+            setLocation({
+              lat: location.lat,
+              lng: location.lng,
+            });
+          }}
+          onRegionChangeComplete={(region) => {
+            console.warn(location);
+            setLocation({
+              lat: location.lat,
+              lng: location.lng,
+            });
+          }}
+          >
+          <Marker
+            coordinate={{
+              latitude: location.lat,
+              longitude: location.lng,
+            }}
+            title="this is a marker"
+            description="this is a marker description"
+          />
         </MapView>
       )}
     </>
