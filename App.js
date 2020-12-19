@@ -2,13 +2,15 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, View, Platform, PermissionsAndroid } from 'react-native';
 import LocationMap from './src/components/Maps/LocationMap';
+import Autocomplete from './src/components/Maps/Autocomplete';
 
 const App = () => {
   
   return (
-    <View style={styles.container}>
-      <LocationMap />
-    </View>
+    // <View style={styles.container}>
+    //   {/* <LocationMap /> */}
+    // </View>
+    <Autocomplete />
   );
 };
 
