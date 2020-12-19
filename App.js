@@ -3,6 +3,8 @@ import React from 'react';
 import { SafeAreaView, StyleSheet, View, Platform, PermissionsAndroid } from 'react-native';
 import LocationMap from './src/components/Maps/LocationMap';
 import Autocomplete from './src/components/Maps/Autocomplete';
+import { NavigationContainer, DrawerActions } from '@react-navigation/native';
+import DrawerNavigator from './src/components/Navigation/DrawerNavigation';
 
 const App = () => {
   
@@ -10,7 +12,10 @@ const App = () => {
     // <View style={styles.container}>
     //   {/* <LocationMap /> */}
     // </View>
-    <Autocomplete />
+    // <Autocomplete />
+    <NavigationContainer>
+      <DrawerNavigator />
+    </NavigationContainer>
   );
 };
 
