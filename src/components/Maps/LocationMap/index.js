@@ -1,27 +1,25 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {StyleSheet, Platform, PermissionsAndroid} from 'react-native';
 import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
-import Geolocation from 'react-native-geolocation-service';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    //flex: 1,
   },
   maps: {...StyleSheet.absoluteFillObject},
 });
 
 const LocationMap = ({lat, lng}) => {
-  const [location, setLocation] = useState({'lat':lat,'lng':lng});
+  const [location, setLocation] = useState({lat, lng});
   const mapRef = useRef(null);
-  // console.log(location.lat);
-  // console.log(location.lng);
   useEffect(() => {
     setLocation({'lat':lat,'lng':lng});
     mapRef.current.animateToRegion({
       latitude: lat,
       longitude: lng,
       latitudeDelta: 0.0922,
-      longitudeDelta:0.0421})
+      longitudeDelta:0.0421
+    })
   }, [lat,lng]);
 
   return (
@@ -39,15 +37,15 @@ const LocationMap = ({lat, lng}) => {
           }}
           onRegionChange={(region) => {
             setLocation({
-              lat: location.lat,
-              lng: location.lng,
+              lat: region.latitude,
+              lng: region.longitude,
             });
           }}
           onRegionChangeComplete={(region) => {
-            console.warn(location);
+            //console.warn(location);
             setLocation({
-              lat: location.lat,
-              lng: location.lng,
+              lat: region.latitude,
+              lng: region.longitude,
             });
           }}
           >
