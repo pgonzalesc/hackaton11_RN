@@ -10,7 +10,7 @@ const TabNavigator = () => {
     <Tab.Navigator screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
-          if (route.name === 'Home') {
+          if (route.name === 'Actividad1') {
             iconName = focused ? 'md-home' : 'md-home-outline';
           } else if(route.name === 'Splash') {
             iconName = focused ? 'md-exit' : 'md-exit-outline';

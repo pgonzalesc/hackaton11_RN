@@ -5,6 +5,7 @@ import Geocoder from 'react-native-geocoding';
 import LocationMap from '../LocationMap';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import Geolocation from 'react-native-geolocation-service';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 Geocoder.init("AIzaSyBgmoTPlKbHQ9gW1zKy1zpAcVUtIrh5YSM");
 const { height, width } = Dimensions.get('window');
@@ -15,9 +16,9 @@ const Autocomplete = ()=> {
     const [lastLocation, setLastLocation] = useState(null);
     const [initLocation, setInitLocation] = useState();
     const [location, setLocation] = useState({lat: 0, lng: 0});
+    const [enabledInput, setEnabledInput] = useState(true);
 
     useEffect(() => {
-        console.warn('useEffect');
         if (Platform.OS === 'ios') {
             Geolocation.requestAuthorization('always');
         }
@@ -28,13 +29,12 @@ const Autocomplete = ()=> {
         }
         Geolocation.getCurrentPosition(
             (position) => {
-                console.warn('position', position);
                 const {latitude, longitude} = position.coords;
                 setInitLocation({lat: latitude, lng: longitude});
                 setLocation({lat: latitude, lng: longitude});
             },
             (error) => {
-            console.warn(error.code, error.message);
+                console.warn(error.code, error.message);
             },
             {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
         );
@@ -50,31 +50,39 @@ const Autocomplete = ()=> {
 
     return(
         <>
-            <GooglePlacesAutocomplete
-                placeholder='Search'
-                onPress={(data, details = null) => {
-                    // 'details' is provided when fetchDetails = true
-                    console.log('Hola');
-                    Geocoder.from(details.description)
-                    .then(json => {
-                        var location = json.results[0].geometry.location;
-                        console.log('location',location);
-                        setLastLocation(location);
-                        setDisabled(false);
-                        setLocation({lat:location.lat, lng:location.lng});
-                    })
-                    .catch(error => console.warn(error));
-                }}
-                query={{
-                    key: 'AIzaSyBgmoTPlKbHQ9gW1zKy1zpAcVUtIrh5YSM',
-                    language: 'en',
-                }}
-                requestUrl={{
-                    useOnPlatform: 'web', // or "all"
-                    url:
-                    'https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api', // or any proxy server that hits https://maps.googleapis.com/maps/api
-                }}
-            />
+            <View style={{flexDirection:'row', alignItems: 'flex-start',justifyContent:'flex-start'}}>
+                <TouchableHighlight 
+                 style={styles.buttonSearch}
+                 onPress={()=>setEnabledInput(false)}
+                >
+                    <Icon name={'md-navigate'} size={20} color={'#5F9DF5'}/>
+                </TouchableHighlight>
+                <GooglePlacesAutocomplete
+                    placeholder='Buscar Lugar'
+                    textInputHide={enabledInput}
+                    enablePoweredByContainer={false}
+                    onPress={(data, details = null) => {
+                        // 'details' is provided when fetchDetails = true
+                        Geocoder.from(details.description)
+                        .then(json => {
+                            var location = json.results[0].geometry.location;
+                            setLastLocation(location);
+                            setDisabled(false);
+                            setLocation({lat:location.lat, lng:location.lng});
+                        })
+                        .catch(error => console.warn(error));
+                    }}
+                    query={{
+                        key: 'AIzaSyBgmoTPlKbHQ9gW1zKy1zpAcVUtIrh5YSM',
+                        language: 'en',
+                    }}
+                    requestUrl={{
+                        useOnPlatform: 'web', // or "all"
+                        url:
+                        'https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api', // or any proxy server that hits https://maps.googleapis.com/maps/api
+                    }}
+                />
+            </View>
             <View style={{flexDirection:'row',justifyContent: 'space-between'}}>
                 <TouchableHighlight 
                  style={styles.button} 
@@ -106,7 +114,8 @@ const Autocomplete = ()=> {
 
 const styles = StyleSheet.create({
     container: {
-        height: '70%',
+        flex:1,
+        height: '60%',
     },
     button: {
         width:width/2,
@@ -119,6 +128,11 @@ const styles = StyleSheet.create({
         width:width/2,
         padding: 10,
         backgroundColor: '#EBEBEB',
+    },
+    buttonSearch: {
+        paddingHorizontal:20, 
+        paddingVertical: 12, 
+        backgroundColor:'#e1e1e1'
     },
     textButton: {
         textAlign:'center',
