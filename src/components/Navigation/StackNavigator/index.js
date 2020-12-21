@@ -2,6 +2,7 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from '@react-navigation/native';
 import Actividad1 from "../../../../screens/Actividad1";
+import Actividad2 from "../../../../screens/Actividad2";
 import Splash from "../../../../screens/Splash";
 
 const Stack = createStackNavigator();
@@ -20,6 +21,7 @@ const MainStackNavigator = () => {
     // <Stack.Navigator screenOptions={screenOptionStyle}>
     <Stack.Navigator mode="modal" headerMode="none">
       <Stack.Screen name="Actividad1" component={Actividad1} />
+      <Stack.Screen name="Actividad2" component={Actividad2}/>
       <Stack.Screen name="Splash" component={Splash}/>
     </Stack.Navigator>
     // <NavigationContainer>
