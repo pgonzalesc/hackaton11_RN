@@ -3,11 +3,13 @@ import { Animated, Easing , Image, StyleSheet, View, Text, TouchableHighlight, D
 
 const { height, width } = Dimensions.get('window');
 
-const Gallery = () => {
+const Gallery = ({data}) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [visible, setVisible] = useState(false);
+  const [imageExpand, setImageExpand] = useState(null);
 
-  const handleIn = () => {
+  const handleIn = (img) => {
+    setImageExpand(img);
     Animated.timing(fadeAnim, {
       toValue: 1,
       duratioin: 1000,
@@ -32,38 +34,22 @@ const Gallery = () => {
       { !visible &&
         <>
           <View style={styles.containerGallery}>
-            <TouchableHighlight onPress={handleIn} style={styles.photo}>
-              <Image
-                source={{
-                  uri: 'https://images.unsplash.com/photo-1533036176814-15768dd821d8?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=632&q=80',
-                }}
-                style={styles.image}
-              />
-            </TouchableHighlight>
-            <TouchableHighlight onPress={handleIn} style={styles.photo}>
-              <Image
-                source={{
-                  uri: 'https://images.unsplash.com/photo-1533036176814-15768dd821d8?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=632&q=80',
-                }}
-                style={styles.image}
-              />
-            </TouchableHighlight>
-            <TouchableHighlight onPress={handleIn} style={styles.photo}>
-              <Image
-                source={{
-                  uri: 'https://images.unsplash.com/photo-1533036176814-15768dd821d8?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=632&q=80',
-                }}
-                style={styles.image}
-              />
-            </TouchableHighlight>
-            <TouchableHighlight onPress={handleIn} style={styles.photo}>
-              <Image
-                source={{
-                  uri: 'https://images.unsplash.com/photo-1533036176814-15768dd821d8?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=632&q=80',
-                }}
-                style={styles.image}
-              />
-            </TouchableHighlight>
+          { data.length > 0 &&
+                data.map(({image, id})=>{
+                    return(
+                    <TouchableHighlight onPress={()=>handleIn(image)} style={styles.photo}>
+                        <Image
+                            key={id}
+                            id={id}
+                            source={{
+                            uri: image,
+                            }}
+                            style={styles.image}
+                        />
+                    </TouchableHighlight>
+                    )
+                })
+          }
           </View>
         </>
       }
@@ -74,7 +60,7 @@ const Gallery = () => {
           </TouchableHighlight>
 
           <Animated.Image
-            source={{uri: 'https://images.unsplash.com/photo-1533036176814-15768dd821d8?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=632&q=80'}}
+            source={{uri: imageExpand}}
             resizeMode='cover'
             style={{
                 position: 'absolute',
